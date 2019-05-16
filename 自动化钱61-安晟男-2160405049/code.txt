@@ -1,0 +1,35 @@
+root_path='C:\Users\10066\Desktop\数字图像处理\作业-直线检测\';
+img_ori{1}=imread(strcat(root_path,'test1.tif'));
+img_ori{2}=imread(strcat(root_path,'test2.png'));
+img_ori{3}=imread(strcat(root_path,'test3.jpg'));
+img_ori{4}=imread(strcat(root_path,'test4.bmp'));
+img_ori{5}=imread(strcat(root_path,'test5.png'));
+img_ori{6}=imread(strcat(root_path,'test6.jpg'));
+
+for i=1:6
+    img_f=img_ori{i}(:,:,1);
+    edge1{i}=edge(img_f,'sobel',0.05);
+    edge2{i}=edge(img_f,'canny');
+    g1=edge1{i};
+    g2=edge2{i};
+    for j=1:2
+       if j==1
+            g=g1;
+       else
+           g=g2;
+       end
+       [H,T,R]=hough(g,'rho');
+        q=houghpeaks(H,5,'threshold',ceil(0.3*max(H(:))));
+        x=T(q(:,2));
+        y=R(q(:,1));
+        plot(x,y,'s')
+        lines=houghlines(g,T,R,q,'FillGap',10,'MinLength',10);  
+        imshow(img_f)
+        hold on
+        for k=1:length(lines)
+            xy=[lines(k).point1;lines(k).point2];
+            plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','green');
+        end
+    end
+       
+end
